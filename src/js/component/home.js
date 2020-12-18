@@ -7,12 +7,42 @@ export class Home extends React.Component {
 			tasksList: ["Clean up the house"],
 			task: ""
 		};
+		this.url = "https://assets.breatheco.de/apis/fake/todos/user/yoruRingo";
 	}
+	componentDidMount() {
+		fetch(this.url)
+			.then(function(response) {
+				if (!response.ok) {
+					throw Error(response.statusText);
+				}
+				return response.json();
+			})
+			.then(jsonifiedResponse =>
+				this.setState({ tasksList: jsonifiedResponse })
+			)
+			.catch(function(error) {
+				console.log("Looks like there was a problem: \n", error);
+			});
+	}
+
 	addList = e => {
 		if (e.keyCode == 13) {
-			var updateTaskList = this.state.tasksList;
-			updateTaskList.push(this.state.task);
-			this.setState({ taskList: updateTaskList });
+			let newItem = { label: this.state.task, done: false };
+			let updatedList = this.state.tasksList.concat(newItem);
+			this.setState({ tasksList: updatedList });
+
+			fetch(this.state.url, {
+				method: "PUT", // or 'POST'
+				body: JSON.stringify(updatedList), // data can be `string` or {object}!
+				headers: {
+					"Content-Type": "application/json"
+				}
+			})
+				.then(res => res.json())
+				.then(response =>
+					console.log("Success:", JSON.stringify(response))
+				)
+				.catch(error => console.error("Error:", error));
 		}
 	};
 
@@ -43,9 +73,9 @@ export class Home extends React.Component {
 					<ol className="list">
 						{this.state.tasksList.map((content, i) => (
 							<li key={i}>
-								{content}
+								{content.label}
 								<a onClick={() => this.removeItem(i)}>
-									<i className="fas fa-minus" />
+									<i className="fas fa-times" />
 								</a>
 							</li>
 						))}
