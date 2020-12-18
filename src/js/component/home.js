@@ -15,6 +15,15 @@ export class Home extends React.Component {
 			this.setState({ taskList: updateTaskList });
 		}
 	};
+
+	removeItem = index => {
+		var newList = this.state.tasksList;
+		newList.splice(index, 1);
+
+		this.setState({
+			tasksList: newList
+		});
+	};
 	render() {
 		return (
 			<div>
@@ -32,9 +41,14 @@ export class Home extends React.Component {
 				</div>
 				<div className="d-flex justify-content-center">
 					<ol className="list">
-						{this.state.tasksList.map((content, i) => {
-							return <li key={i}>{content}</li>;
-						})}
+						{this.state.tasksList.map((content, i) => (
+							<li key={i}>
+								{content}
+								<a onClick={() => this.removeItem(i)}>
+									<i className="fas fa-minus" />
+								</a>
+							</li>
+						))}
 					</ol>
 				</div>
 			</div>
