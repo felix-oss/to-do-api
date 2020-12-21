@@ -4,7 +4,7 @@ export class Home extends React.Component {
 	constructor() {
 		super();
 		this.state = {
-			tasksList: ["Clean up the house"],
+			tasksList: [""],
 			task: ""
 		};
 		this.url = "https://assets.breatheco.de/apis/fake/todos/user/yoruRingo";
@@ -31,7 +31,7 @@ export class Home extends React.Component {
 			let updatedList = this.state.tasksList.concat(newItem);
 			this.setState({ tasksList: updatedList });
 
-			fetch(this.state.url, {
+			fetch(this.url, {
 				method: "PUT", // or 'POST'
 				body: JSON.stringify(updatedList), // data can be `string` or {object}!
 				headers: {
@@ -39,20 +39,33 @@ export class Home extends React.Component {
 				}
 			})
 				.then(res => res.json())
-				.then(response =>
-					console.log("Success:", JSON.stringify(response))
-				)
+				.then(response => console.log("Success:", response))
 				.catch(error => console.error("Error:", error));
 		}
 	};
 
 	removeItem = index => {
 		var newList = this.state.tasksList;
+		let empt = [{ label: "", done: "" }];
 		newList.splice(index, 1);
 
 		this.setState({
 			tasksList: newList
 		});
+		let data = newList == [] ? empt : newList;
+		console.log(newList);
+		console.log(data);
+
+		fetch(this.url, {
+			method: "PUT", // or 'POST'
+			body: JSON.stringify(data), // data can be `string` or {object}!
+			headers: {
+				"Content-Type": "application/json"
+			}
+		})
+			.then(res => res.json())
+			.then(response => console.log("Success:", response))
+			.catch(error => console.error("Error:", error));
 	};
 	render() {
 		return (
